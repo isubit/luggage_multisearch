@@ -1,0 +1,8 @@
+name = Multisearch
+description = Multiple Site Solr Faceted search
+core = 7.x
+package = Luggage
+version = 7.x-1.0
+project = luggage_multisearch
+dependencies[] = apachesolr_multisitesearch
+features[features_api][] = api:2

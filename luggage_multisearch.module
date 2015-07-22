@@ -1,0 +1,46 @@
+<?php
+/**
+ * @file
+ * Module to support category and tags.
+ */
+
+/**
+ * Implements hook_apachesolr_query_alter().
+ */
+function luggage_multisearch_apachesolr_query_alter(&$query) {
+  // Add category, tags and site to the list of fields.
+  $query->addParam('fl', 'sm_vid_Category');
+  $query->addParam('fl', 'sm_vid_Tags');
+  $query->addParam('fl', 'site');
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function luggage_multisearch_theme_registry_alter(&$theme_registry) {
+  // Tell the theme system to look in the "templates" subdirectory within our module.
+  $path = drupal_get_path('module', 'luggage_multisearch') . '/templates';
+  $theme_registry['search_result']['theme paths'] = array(0 => $path);
+  $theme_registry['search_result']['theme path'] = $path;
+  $theme_registry['search_result']['path'] = $path;
+  $theme_registry['search_result']['template'] = 'search-result';
+}
+
+/**
+ * Implements hook_preprocess_search_result()
+ */
+function luggage_multisearch_preprocess_search_result(&$variables) {
+  // Make site, category and tags available for the template.
+  $variables['site'] = NULL;
+  $variables['sm_vid_Category'] = NULL;
+  $variables['sm_vid_Tags'] = NULL;
+  if (!empty($variables['result']['fields']['site'])) {
+    $variables['site'] = $variables['result']['fields']['site'];
+  }
+  if (!empty($variables['result']['fields']['sm_vid_Category'])) {
+    $variables['sm_vid_Category'] = implode(', ', $variables['result']['fields']['sm_vid_Category']);
+  }
+  if (!empty($variables['result']['fields']['sm_vid_Tags'])) {
+    $variables['sm_vid_Tags'] = implode(', ', $variables['result']['fields']['sm_vid_Tags']);
+  }
+}
